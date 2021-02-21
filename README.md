@@ -1,1 +1,1 @@
-# shit-at-league-backend
+# You're Shit at League - Backend
