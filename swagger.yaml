@@ -3,7 +3,7 @@ info:
   version: '1'
   title: shit-at-league
 servers:
-  - url: 'http://localhost:3001'
+  - url: 'http://localhost:3000'
 paths:
   /player:
     get:
