@@ -1,0 +1,181 @@
+openapi: 3.0.0
+info:
+  title: shit-at-league
+  version: "1"
+servers:
+- url: http://localhost:3000
+paths:
+  /:
+    get:
+      summary: Simple endpoint ping
+      operationId: root
+      responses:
+        "200":
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+                x-content-type: text/plain
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+  /player:
+    get:
+      summary: Get the shit summary for a particular player
+      operationId: get_player
+      parameters:
+      - name: summonerName
+        in: query
+        description: ID of the user
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      - name: region
+        in: query
+        description: Region of the player
+        required: true
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: The shit summary for the given player
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-openapi-router-controller: swagger_server.controllers.default_controller
+components:
+  schemas:
+    Player:
+      required:
+      - games
+      - name
+      - region
+      type: object
+      properties:
+        name:
+          type: string
+        region:
+          type: string
+        games:
+          type: array
+          items:
+            $ref: '#/components/schemas/Game'
+      example:
+        name: name
+        games:
+        - kills: 0
+          assists: 0
+          stats:
+          - secondary: secondary
+            primary: primary
+          - secondary: secondary
+            primary: primary
+          deaths: 0
+          champion:
+            name: name
+            backspashUrl: http://example.com/aeiou
+          relevance: 0.5962134
+        - kills: 0
+          assists: 0
+          stats:
+          - secondary: secondary
+            primary: primary
+          - secondary: secondary
+            primary: primary
+          deaths: 0
+          champion:
+            name: name
+            backspashUrl: http://example.com/aeiou
+          relevance: 0.5962134
+        region: region
+    Game:
+      required:
+      - assists
+      - champion
+      - deaths
+      - kills
+      - relevance
+      - stats
+      type: object
+      properties:
+        kills:
+          minimum: 0
+          type: integer
+        deaths:
+          minimum: 0
+          type: integer
+        assists:
+          minimum: 0
+          type: integer
+        champion:
+          $ref: '#/components/schemas/Champion'
+        stats:
+          type: array
+          items:
+            $ref: '#/components/schemas/Statistic'
+        relevance:
+          maximum: 1
+          minimum: 0
+          type: number
+          format: float
+      example:
+        kills: 0
+        assists: 0
+        stats:
+        - secondary: secondary
+          primary: primary
+        - secondary: secondary
+          primary: primary
+        deaths: 0
+        champion:
+          name: name
+          backspashUrl: http://example.com/aeiou
+        relevance: 0.5962134
+    Statistic:
+      required:
+      - primary
+      type: object
+      properties:
+        primary:
+          type: string
+        secondary:
+          type: string
+      example:
+        secondary: secondary
+        primary: primary
+    Champion:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+        backspashUrl:
+          type: string
+          format: uri
+      example:
+        name: name
+        backspashUrl: http://example.com/aeiou
+    Error:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+
