@@ -6,10 +6,19 @@ servers:
   - url: 'http://localhost:3000'
 paths:
   /:
-  get
+    get:
+      summary: 'Simple endpoing ping'
+      operationId: root
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            text/plain:
+              schema:
+                type: string
   /player:
     get:
-      summary: 'Sample endpoint: Returns the shit summary for a particular player'
+      summary: 'Get the shit summary for a particular player'
       operationId: getPlayer
       parameters:
         - name: summonerName
