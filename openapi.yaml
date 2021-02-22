@@ -1,0 +1,126 @@
+openapi: 3.0.0
+info:
+  version: '1'
+  title: shit-at-league
+servers:
+  - url: 'http://localhost:3001'
+paths:
+  /:
+    get:
+      summary: 'Simple endpoint ping'
+      operationId: root
+      responses:
+        '200':
+          description: 'OK'
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "OK"
+  /player:
+    get:
+      summary: 'Get the shit summary for a particular player'
+      operationId: getPlayer
+      parameters:
+        - name: summonerName
+          in: query
+          description: ID of the user
+          required: true
+          schema:
+            type: string
+        - name: region
+          in: query
+          description: Region of the player
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 'The shit summary for the given player'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Player'
+        default:
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Player:
+      type: object
+      required:
+        - name
+        - region
+        - games
+      properties:
+        name:
+            type: string
+        region:
+            type: string
+        games:
+            type: array
+            items:
+                $ref: '#/components/schemas/Game'
+    Game:
+        type: object
+        required:
+            - kills
+            - deaths
+            - assists
+            - relevance
+            - champion
+            - stats
+        properties:
+          kills:
+            type: integer
+            minimum: 0
+          deaths:
+            type: integer
+            minimum: 0
+          assists:
+            type: integer
+            minimum: 0
+          champion:
+              $ref: '#/components/schemas/Champion'
+          stats:
+            type: array
+            items:
+              $ref: '#/components/schemas/Statistic'
+          relevance:
+            type: number
+            format: float
+            minimum: 0
+            maximum: 1
+    Statistic:
+      type: object
+      required:
+        - primary
+      properties:
+        primary:
+          type: string
+        secondary:
+          type: string
+    Champion:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        backspashUrl:
+          type: string
+          format: uri
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
