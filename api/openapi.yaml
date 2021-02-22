@@ -1,34 +1,32 @@
 openapi: 3.0.0
 info:
+  version: '1'
   title: shit-at-league
-  version: "1"
 servers:
-- url: http://localhost:3000
+  - url: 'http://localhost:3000'
 paths:
-  /user:
+  /:
+  get
+  /player:
     get:
       summary: 'Sample endpoint: Returns the shit summary for a particular player'
       operationId: getPlayer
       parameters:
-      - name: summonerName
-        in: query
-        description: ID of the user
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
-      - name: region
-        in: query
-        description: Region of the player
-        required: true
-        style: form
-        explode: true
-        schema:
-          type: string
+        - name: summonerName
+          in: query
+          description: ID of the user
+          required: true
+          schema:
+            type: string
+        - name: region
+          in: query
+          description: Region of the player
+          required: true
+          schema:
+            type: string
       responses:
-        "200":
-          description: The shit summary for the given player
+        '200':
+          description: 'The shit summary for the given player'
           content:
             application/json:
               schema:
@@ -39,116 +37,77 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-      x-swagger-router-controller: Default
 components:
   schemas:
     Player:
-      required:
-      - games
-      - name
-      - region
       type: object
+      required:
+        - name
+        - region
+        - games
       properties:
         name:
-          type: string
+            type: string
         region:
-          type: string
+            type: string
         games:
-          type: array
-          items:
-            $ref: '#/components/schemas/Game'
-      example:
-        name: name
-        games:
-        - kills: 0
-          assists: 0
-          stats:
-          - secondary: secondary
-            primary: primary
-          - secondary: secondary
-            primary: primary
-          deaths: 0
-          champion:
-            name: name
-            backspashUrl: http://example.com/aeiou
-        - kills: 0
-          assists: 0
-          stats:
-          - secondary: secondary
-            primary: primary
-          - secondary: secondary
-            primary: primary
-          deaths: 0
-          champion:
-            name: name
-            backspashUrl: http://example.com/aeiou
-        region: region
+            type: array
+            items:
+                $ref: '#/components/schemas/Game'
     Game:
-      required:
-      - assists
-      - champion
-      - deaths
-      - kills
-      - stats
-      type: object
-      properties:
-        kills:
-          minimum: 0
-          type: integer
-        deaths:
-          minimum: 0
-          type: integer
-        assists:
-          minimum: 0
-          type: integer
-        champion:
-          $ref: '#/components/schemas/Champion'
-        stats:
-          type: array
-          items:
-            $ref: '#/components/schemas/Statistic'
-      example:
-        kills: 0
-        assists: 0
-        stats:
-        - secondary: secondary
-          primary: primary
-        - secondary: secondary
-          primary: primary
-        deaths: 0
-        champion:
-          name: name
-          backspashUrl: http://example.com/aeiou
+        type: object
+        required:
+            - kills
+            - deaths
+            - assists
+            - relevance
+            - champion
+            - stats
+        properties:
+          kills:
+            type: integer
+            minimum: 0
+          deaths:
+            type: integer
+            minimum: 0
+          assists:
+            type: integer
+            minimum: 0
+          champion:
+              $ref: '#/components/schemas/Champion'
+          stats:
+            type: array
+            items:
+              $ref: '#/components/schemas/Statistic'
+          relevance:
+            type: number
+            format: float
+            minimum: 0
+            maximum: 1
     Statistic:
-      required:
-      - primary
       type: object
+      required:
+        - primary
       properties:
         primary:
           type: string
         secondary:
           type: string
-      example:
-        secondary: secondary
-        primary: primary
     Champion:
-      required:
-      - name
       type: object
+      required:
+        - name
       properties:
         name:
           type: string
         backspashUrl:
           type: string
           format: uri
-      example:
-        name: name
-        backspashUrl: http://example.com/aeiou
     Error:
-      required:
-      - code
-      - message
       type: object
+      required:
+        - code
+        - message
       properties:
         code:
           type: integer
