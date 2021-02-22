@@ -7,7 +7,7 @@ servers:
 paths:
   /:
     get:
-      summary: 'Simple endpoing ping'
+      summary: 'Simple endpoint ping'
       operationId: root
       responses:
         '200':
