@@ -16,6 +16,7 @@ paths:
             text/plain:
               schema:
                 type: string
+                example: "OK"
   /player:
     get:
       summary: 'Get the shit summary for a particular player'
