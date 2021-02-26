@@ -1,7 +1,11 @@
+from .queryengine import QueryEngine
+
+
 class PlayerStats:
-    def __init__(self, region: str, summoner_id: str):
+    def __init__(self, region: str, summoner_id: str, query_engine: QueryEngine):
         self.region = region
         self.summonerId = summoner_id
+        self.query_engine = query_engine
         self.finishedComputing = False
         self.successful = False
 
