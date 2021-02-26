@@ -1,5 +1,6 @@
 import requests
 
+
 class RiotClient:
     """
     This is a client application for riot's developer API capable of making all queries necessary for this library.
@@ -41,7 +42,7 @@ class RiotClient:
         """
         Make a GET call to the /lol/match/v4/matchlists/by-account/{encryptedAccountId} endpoint.
         """
-        endpoint_url = 'https://{}.api.riotgames.com/lol/match/v4/matchlists/by-account/{}}?api_key={}}'.format(
+        endpoint_url = 'https://{}.api.riotgames.com/lol/match/v4/matchlists/by-account/{}?api_key={}'.format(
             self.region,
             encrypted_summoner_id,
             self.apiKey
@@ -52,8 +53,17 @@ class RiotClient:
 
         return response.json()
 
-    def get_match_by_match_id(self, match_id: str) -> dict:
+    def get_match_by_match_id(self, match_id: int) -> dict:
         """
         Make a GET call to the /lol/match/v4/matches/{matchId} endpoint.
         """
-        pass
+        endpoint_url = 'https://{}.api.riotgames.com/lol/match/v4/matches/{}?api_key={}'.format(
+            self.region,
+            str(match_id),
+            self.apiKey
+        )
+        response = requests.get(endpoint_url)
+        if response.status_code != 200:
+            raise RiotClient.APIException()  # TODO
+
+        return response.json()
