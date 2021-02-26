@@ -1,7 +1,6 @@
 import os
 
 import pytest
-from dotenv import load_dotenv
 
 from shitatleague.riotclient import RiotClient
 
@@ -25,7 +24,7 @@ def test_get_summoner_by_name():
 def test_bad_get_summoner_by_name():
     client = RiotClient(os.environ.get("API_KEY"), "NA1")
     with pytest.raises(RiotClient.APIException):
-        result = client.get_summoner_by_name(INVALID_SUMMONER_NAME)
+        client.get_summoner_by_name(INVALID_SUMMONER_NAME)
 
 
 def test_matchlist_by_account():
