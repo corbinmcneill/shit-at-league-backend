@@ -5,7 +5,7 @@ import uvicorn
 from fastapi import FastAPI
 import config
 
-from shitatleague.queryengine import QueryEngine
+from shitatleague.riotclient import QueryEngine
 
 app = FastAPI()
 
