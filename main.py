@@ -1,12 +1,9 @@
-import os
-
-import dotenv
 import uvicorn
 from fastapi import FastAPI
+
 import config
 
-from shitatleague.riotclient import QueryEngine
-
+config.settings
 app = FastAPI()
 
 
@@ -17,7 +14,6 @@ async def root():
 
 @app.get("/get_player/{region}/{summoner_id}")
 async def get_player(region: str, summoner_id: str):
-    player = Player(reg)
     return {}
 
 
