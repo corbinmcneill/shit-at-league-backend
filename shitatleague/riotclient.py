@@ -67,3 +67,18 @@ class RiotClient:
             raise RiotClient.APIException()  # TODO
 
         return response.json()
+
+    def get_timeline_by_match_id(self, match_id: int) -> dict:
+        """
+        Make a GET call to the /lol/match/v4/timelines/by-match/{matchId} endpoint.
+        """
+        endpoint_url = "https://{}.api.riotgames.com/lol/match/v4/timelines/by-match/{}?api_key={}".format(
+            self.region,
+            str(match_id),
+            self.apiKey
+        )
+        response = requests.get(endpoint_url)
+        if response.status_code != 200:
+            raise RiotClient.APIException()  # TODO
+
+        return response.json()
