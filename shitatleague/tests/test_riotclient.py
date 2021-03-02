@@ -27,13 +27,13 @@ def test_bad_get_summoner_by_name():
         client.get_summoner_by_name(INVALID_SUMMONER_NAME)
 
 
-def test_matchlist_by_account():
+def test_get_matchlist_by_account():
     client = RiotClient(os.environ.get("API_KEY"), "NA1")
     result = client.get_matchlist_by_account(VALID_ENCRYPTED_SUMMONER_ID)
     assert ('matches' in result)
 
 
-def test_bad_matchlist_by_account():
+def test_bad_get_matchlist_by_account():
     client = RiotClient(os.environ.get("API_KEY"), "NA1")
     with pytest.raises(RiotClient.APIException):
         client.get_matchlist_by_account(INVALID_ENCRYPTED_SUMMONER_ID)
