@@ -31,7 +31,8 @@ class PlayerStats:
         return self.wasSuccessful
 
     async def get_match_ids(self) -> list[int]:
-        return self.riotClient.get_match_history(self.region, self.summonerId)
+        # TODO
+        return []
 
     async def get_match_by_id(self, match_id: int) -> dict:
         return {}
