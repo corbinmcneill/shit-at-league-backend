@@ -3,7 +3,7 @@ from typing import Callable
 from .riotclient import RiotClient
 
 
-class PlayerStats:
+class PlayerSummary:
     def __init__(self, region: str, summoner_id: str, riot_client: RiotClient, callback: Callable[[], None]):
         self.region = region
         self.summonerId = summoner_id
