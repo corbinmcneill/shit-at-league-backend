@@ -1,14 +1,19 @@
+import os
 from typing import Callable
 
 from .riotclient import RiotClient
 
 
 class PlayerSummary:
-    def __init__(self, region: str, summoner_id: str, riot_client: RiotClient, callback: Callable[[], None]):
+    def __init__(self, region: str, summoner_id: str, riot_client: RiotClient, callback: Callable[[], None],
+                 max_games: int = None):
         self.region = region
         self.summonerId = summoner_id
         self.riotClient = riot_client
         self.callback = callback
+        self.maxGames = max_games
+        if self.maxGames is None:
+            self.maxGames = int(os.environ.get("MAX_GAMES"))
 
         self.matches = None
         self.matchIds = None
@@ -16,7 +21,7 @@ class PlayerSummary:
         self.finishedComputing = False
 
     def generate(self):
-        # TODO missing stuff here
+        self.matchIds = self.get_match_ids()
         try:
             for matchId in self.matchIds:
                 self.matches[matchId] = self.get_match_by_id(matchId)
@@ -34,9 +39,12 @@ class PlayerSummary:
     def was_successful(self) -> bool:
         return self.wasSuccessful
 
-    async def get_match_ids(self) -> list[int]:
+    def get_match_ids(self) -> list:
+        encrypted_id = self.riotClient.get_summoner_by_name(self.summonerId)['accountId']
+        match_history = self.riotClient.get_matchlist_by_account(encrypted_id)
+        number_of_games = min(len(match_history['matches']), self.maxGames)
         # TODO
         return []
 
-    async def get_match_by_id(self, match_id: int) -> dict:
+    def get_match_by_id(self, match_id: int) -> dict:
         return {}
