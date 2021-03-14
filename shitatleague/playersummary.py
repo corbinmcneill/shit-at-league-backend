@@ -1,3 +1,4 @@
+import asyncio
 import os
 from typing import Callable
 
@@ -20,11 +21,10 @@ class PlayerSummary:
         self.wasSuccessful = False
         self.finishedComputing = False
 
-    def generate(self):
-        self.matchIds = self.get_match_ids()
+    async def generate(self) -> None:
         try:
-            for matchId in self.matchIds:
-                self.matches[matchId] = self.get_match_by_id(matchId)
+            self.matchIds = await self.retrieve_match_ids()
+            self.matches = await self.retrieve_matches_by_ids(self.matchIds)
             self.wasSuccessful = True
         except RiotClient.APIException:
             print("Exception occurred")
@@ -33,18 +33,25 @@ class PlayerSummary:
             self.finishedComputing = True
             self.callback()
 
-    def is_resolved(self) -> bool:
-        return self.finishedComputing
-
-    def was_successful(self) -> bool:
-        return self.wasSuccessful
-
-    def get_match_ids(self) -> list:
-        encrypted_id = self.riotClient.get_summoner_by_name(self.summonerId)['accountId']
-        match_history = self.riotClient.get_matchlist_by_account(encrypted_id)
+    async def retrieve_match_ids(self) -> list:
+        encrypted_id = (await self.riotClient.get_summoner_by_name(self.summonerId))['accountId']
+        match_history = await self.riotClient.get_matchlist_by_account(encrypted_id)
         number_of_games = min(len(match_history['matches']), self.maxGames)
-        # TODO
-        return []
 
-    def get_match_by_id(self, match_id: int) -> dict:
-        return {}
+        result = []
+        for match in range(number_of_games):
+            result.append(match_history['matches'][match]['gameId'])
+        return result
+
+    async def retrieve_matches_by_ids(self, match_ids: list) -> list:
+        aws = []
+        for match_id in match_ids:
+            aws.append(self.riotClient.get_match_by_match_id(match_id))
+        done, _ = await asyncio.wait(aws)
+
+        result = {}
+        for item in done:
+            item_result = item.result()
+            result[item_result['gameId']] = item_result
+
+        return result

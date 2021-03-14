@@ -23,7 +23,7 @@ class RiotClient:
             raise RiotClient.InvalidRegionException
         self.region = region
 
-    def get_summoner_by_name(self, summoner_name: str) -> dict:
+    async def get_summoner_by_name(self, summoner_name: str) -> dict:
         """
         Make a GET call to the /lol/summoner/v4/summoners/by-name/{summonerName} endpoint.
         """
@@ -38,7 +38,7 @@ class RiotClient:
 
         return response.json()
 
-    def get_matchlist_by_account(self, encrypted_summoner_id: str) -> dict:
+    async def get_matchlist_by_account(self, encrypted_summoner_id: str) -> dict:
         """
         Make a GET call to the /lol/match/v4/matchlists/by-account/{encryptedAccountId} endpoint.
         """
@@ -53,7 +53,7 @@ class RiotClient:
 
         return response.json()
 
-    def get_match_by_match_id(self, match_id: int) -> dict:
+    async def get_match_by_match_id(self, match_id: int) -> dict:
         """
         Make a GET call to the /lol/match/v4/matches/{matchId} endpoint.
         """
@@ -68,7 +68,7 @@ class RiotClient:
 
         return response.json()
 
-    def get_timeline_by_match_id(self, match_id: int) -> dict:
+    async def get_timeline_by_match_id(self, match_id: int) -> dict:
         """
         Make a GET call to the /lol/match/v4/timelines/by-match/{matchId} endpoint.
         """
