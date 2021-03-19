@@ -43,4 +43,4 @@ class PlayerSummary:
         match_stats = await self.riotClient.get_match_by_match_id(match_id)
         match_timeline = await self.riotClient.get_timeline_by_match_id(match_id)
 
-        return MatchInfo(match_id, match_stats, match_timeline)
+        return MatchInfo(self.summonerId, match_id, match_stats, match_timeline)
