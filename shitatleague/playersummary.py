@@ -1,37 +1,33 @@
-import asyncio
 import os
-from typing import Callable
+from typing import Callable, List
 
+from .matchinfo import MatchInfo
 from .riotclient import RiotClient
 
 
 class PlayerSummary:
-    def __init__(self, region: str, summoner_id: str, riot_client: RiotClient, callback: Callable[[], None],
-                 max_games: int = None):
+    def __init__(self, region: str, summoner_id: str, riot_client: RiotClient, max_games: int = None):
         self.region = region
         self.summonerId = summoner_id
         self.riotClient = riot_client
-        self.callback = callback
         self.maxGames = max_games
-        if self.maxGames is None:
+        print(max_games)
+        if max_games is None:
             self.maxGames = int(os.environ.get("MAX_GAMES"))
 
-        self.matches = None
-        self.matchIds = None
-        self.wasSuccessful = False
-        self.finishedComputing = False
+        self.matchInfo = None
+        """
+        A list of MatchInfo objects.
+        """
 
-    async def generate(self) -> None:
-        try:
-            self.matchIds = await self.retrieve_match_ids()
-            self.matches = await self.retrieve_matches_by_ids(self.matchIds)
-            self.wasSuccessful = True
-        except RiotClient.APIException:
-            print("Exception occurred")
-            # TODO
-        finally:
-            self.finishedComputing = True
-            self.callback()
+    async def generate(self, callback: Callable[[List[MatchInfo]], None]) -> None:
+        match_ids = await self.retrieve_match_ids()
+
+        self.matchInfo = []
+        for matchId in match_ids:
+            self.matchInfo.append(await self.retrieve_match_info_by_id(matchId))
+
+        callback(self.matchInfo)
 
     async def retrieve_match_ids(self) -> list:
         encrypted_id = (await self.riotClient.get_summoner_by_name(self.summonerId))['accountId']
@@ -43,15 +39,8 @@ class PlayerSummary:
             result.append(match_history['matches'][match]['gameId'])
         return result
 
-    async def retrieve_matches_by_ids(self, match_ids: list) -> list:
-        aws = []
-        for match_id in match_ids:
-            aws.append(self.riotClient.get_match_by_match_id(match_id))
-        done, _ = await asyncio.wait(aws)
+    async def retrieve_match_info_by_id(self, match_id: int) -> MatchInfo:
+        match_stats = await self.riotClient.get_match_by_match_id(match_id)
+        match_timeline = await self.riotClient.get_timeline_by_match_id(match_id)
 
-        result = {}
-        for item in done:
-            item_result = item.result()
-            result[item_result['gameId']] = item_result
-
-        return result
+        return MatchInfo(match_id, match_stats, match_timeline)
